@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="./index.css">
+</head>
+
+<body>
+  <div id="app">
+    <h1>新增页面</h1>
+    <hr>
+
+    <div class="main">
+      <p>标题:</p>
+      <input type="text" name="title" v-model="title">
+      <br>
+      <br>
+      <p>正文:</p>
+      <textarea style="width: 100%;" name="content" cols="30" rows="10" v-model="content"></textarea>
+      <br>
+      <br>
+      <button @click="handleSubmit">提交</button>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  <script>
+    const app = new Vue({
+      el: '#app',
+      data: {
+        title: '',
+        content: '',
+      },
+      mounted() {
+      },
+      methods: {
+        handleSubmit(event) {
+          event.preventDefault();
+
+          fetch(`/api/news/insert`, {
+            headers: { "Content-Type": "application/json", },
+            method: 'post',
+            body: JSON.stringify({
+              title: this.title,
+              content: this.content,
+            })
+          }).then(res => {
+            return res.json();
+          }).then(res => {
+            const { message, error, data } = res
+
+            if (error === -1) {
+              alert(message)
+              location.replace("./login.html")
+              return
+            }
+
+            history.back();
+          })
+
+        }
+      },
+    })
+  </script>
+</body>
+
+</html>

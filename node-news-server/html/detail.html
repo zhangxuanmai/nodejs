@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="./index.css">
+</head>
+
+<body>
+  <div id="app">
+    <h1>详情页面</h1>
+    <hr>
+    <div class="main">
+      <h2 class="title">{{title}}</h2>
+      <div style="padding-top: 14px;">
+        <span class="txt">{{createtime}}</span>
+        <span class="txt">{{author}}</span>
+      </div>
+      <div class="content">{{content}}</div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  <script>
+    const app = new Vue({
+      el: '#app',
+      data: {
+        title: '',
+        content: '',
+        createtime: '',
+        author: '',
+      },
+      mounted() {
+        const urlObj = new URL(location.href);
+        const id = urlObj.searchParams.get('id');
+
+        fetch(`/api/news/detail?id=${id}`, {
+          headers: { "Content-Type": "application/json" },
+          method: 'get'
+        }).then(res => {
+          return res.json();
+        }).then((data) => {
+          const { title, content, createtime, author } = data.data
+          this.title = title
+          this.content = content
+          this.createtime = createtime
+          this.author = author
+        })
+      },
+    })
+  </script>
+</body>
+
+</html>

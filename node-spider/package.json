@@ -1,0 +1,11 @@
+{
+  "name": "node-spider",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "git@github.com:zhangxuanmai/node-spider.git",
+  "author": "zhangyuan <674775293@qq.com>",
+  "license": "MIT",
+  "dependencies": {
+    "puppeteer": "^2.0.0"
+  }
+}

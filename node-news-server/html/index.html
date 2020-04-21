@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="./index.css">
+</head>
+
+<body>
+  <div id="app">
+    <div class="rt">
+      <a href="./login.html">登录</a>
+      <!-- <a v-else href="./admin.html">{{user.username}}</a> -->
+    </div>
+    <h1>新闻首页</h1>
+    <hr>
+    <div class="rt main">
+      <input type="txt" v-model="keywords">
+      <button @click="handleSearch">搜索</button>
+    </div>
+    <ul>
+      <li v-for="(item, index) in list" :key="index">
+        <div>
+          <a :href=`./detail.html?id=${item.id}`>
+            <p>{{item.title}}</p>
+            <p class="txt mr-all">{{item.content}}</p>
+          </a>
+        </div>
+        <div class="rt">
+          <span class="txt">{{item.createtime}}</span>
+        </div>
+      </li>
+    </ul>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  <script>
+    const app = new Vue({
+      el: '#app',
+      data: {
+        user: {},
+        keywords: '',
+        list: [],
+      },
+      mounted() {
+        this.user = JSON.parse(localStorage.getItem('USER_DATA') || '{}')
+        this.handleSearch();
+      },
+      methods: {
+        handleSearch() {
+          fetch(`/api/news/list?keywords=${this.keywords}`, {
+            headers: { "Content-Type": "application/json", },
+            method: 'get'
+          }).then(res => {
+            return res.json();
+          }).then((data) => {
+            this.list = data.data
+          })
+        },
+      },
+    })
+  </script>
+</body>
+
+</html>

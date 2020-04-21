@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="./index.css">
+</head>
+
+<body>
+  <div id="app">
+    <a href="./index.html">返回首页</a>
+    <span> | </span>
+    <span class="pointer" @click="handleLoginOut">退出登录</span>
+    <h1>管理中心</h1>
+    <hr>
+    <div class="main flex">
+      <a class="button" href="./add.html">新增</a>
+      <div>
+        <input type="text" v-model="keywords">
+        <button @click="handleSearch">搜索</button>
+      </div>
+    </div>
+    <ul>
+      <li class="flex" v-for="(item, index) in list" :key="index">
+        <div class="flex-lt">
+          <p>{{item.title}}</p>
+          <p class="txt mr-all">{{item.content}}</p>
+          <p class="txt">{{item.createtime}}</p>
+        </div>
+        <div class="flex-rt">
+          <a :href=`./edit.html?id=${item.id}`>编辑</a>
+          <span class="pointer" @click="handleDelete(item)">删除</span>
+        </div>
+      </li>
+    </ul>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  <script>
+    const app = new Vue({
+      el: '#app',
+      data: {
+        keywords: '',
+        list: [],
+      },
+      mounted() {
+        this.handleSearch()
+      },
+      methods: {
+        handleLoginOut() {
+          fetch(`/api/user/login-out`).then(res => {
+            return res.json();
+          }).then(res => {
+            const { message, error, data } = res
+            alert(message)
+            localStorage.removeItem('USER_DATA')
+            location.replace('./index.html')
+          })
+        },
+        handleDelete(value) {
+          fetch(`/api/news/delete?id=${value.id}`, {
+            headers: { "Content-Type": "application/json", },
+            method: 'post'
+          }).then(res => {
+            return res.json();
+          }).then(res => {
+            const { message, error, data } = res
+            alert(message)
+            this.handleSearch()
+          })
+        },
+        handleSearch() {
+          fetch(`/api/user/list?keywords=${this.keywords}`, {
+            headers: { "Content-Type": "application/json", },
+            method: 'get'
+          }).then(res => {
+            return res.json();
+          }).then(res => {
+            const { message, error, data } = res
+            if (error === -1) {
+              alert(message)
+              location.replace("./login.html")
+              return
+            }
+            this.list = data
+          })
+        },
+      },
+    })
+  </script>
+</body>
+
+</html>

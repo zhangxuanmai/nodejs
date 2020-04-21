@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="./index.css">
+</head>
+
+<body>
+  <div id="app">
+    <h1>编辑页面</h1>
+    <hr>
+    <div class="main">
+      <p>标题:</p>
+      <input type="text" name="title" v-model="title">
+      <br>
+      <br>
+      <p>正文:</p>
+      <textarea style="width: 100%;" name="content" cols="30" rows="10" v-model="content"></textarea>
+      <br>
+      <br>
+      <button @click="handleSubmit">提交</button>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  <script>
+    const app = new Vue({
+      el: '#app',
+      data: {
+        title: '',
+        content: '',
+      },
+      mounted() {
+        this.doFetchDetail();
+      },
+      methods: {
+        doFetchDetail() {
+          const urlObj = new URL(location.href);
+          const id = urlObj.searchParams.get('id');
+
+          fetch(`/api/news/detail?id=${id}`, {
+            headers: { "Content-Type": "application/json" },
+            method: 'get'
+          }).then(res => {
+            return res.json();
+          }).then((data) => {
+            const { title, content } = data.data
+            this.title = title
+            this.content = content
+          })
+        },
+        handleSubmit(event) {
+          event.preventDefault();
+          const urlObj = new URL(location.href);
+          const id = urlObj.searchParams.get('id');
+
+          fetch(`/api/news/update`, {
+            headers: { "Content-Type": "application/json", },
+            method: 'post',
+            body: JSON.stringify({
+              id: id,
+              title: this.title,
+              content: this.content,
+            })
+          }).then(res => {
+            return res.json();
+          }).then(res => {
+            const { message, error, data } = res
+
+            if (error === -1) {
+              alert(message)
+              location.replace("./login.html")
+              return
+            }
+
+            history.back();
+          })
+
+        }
+      },
+    })
+  </script>
+</body>
+
+</html>

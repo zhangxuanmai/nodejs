@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="./index.css">
+</head>
+
+<body>
+  <div id="app">
+    <a class="pointer" href="./index.html">返回首页</a>
+    <h1>登录页面</h1>
+    <hr>
+    <div class="main">
+      <label for="username">用户名</label>
+      <input type="text" id="username" v-model="username" />
+      <label for="password">密码</label>
+      <input type="text" id="password" v-model="password" />
+      <button @click="handleLogin">登录</button>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  <script>
+    const app = new Vue({
+      el: '#app',
+      data: {
+        username: '',
+        password: '',
+      },
+      methods: {
+        handleLogin() {
+          const data = {
+            username: this.username,
+            password: this.password,
+          }
+          fetch(`/api/user/login`, {
+            headers: { "Content-Type": "application/json", },
+            method: 'post',
+            body: JSON.stringify(data)
+          }).then(res => {
+            return res.json();
+          }).then((res) => {
+            const { error, message, data } = res
+            alert(message)
+
+            if (error === -1) return
+            localStorage.setItem('USER_DATA', JSON.stringify(data))
+            location.replace("./admin.html")
+          })
+        }
+      },
+    })
+  </script>
+</body>
+
+</html>
